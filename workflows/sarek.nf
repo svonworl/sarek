@@ -461,7 +461,6 @@ include { FASTQC                                      } from '../modules/nf-core
 include { FASTP                                       } from '../modules/nf-core/fastp/main'
 
 // Create umi consensus bams from fastq
-include { FASTQ_CREATE_UMI_CONSENSUS_FGBIO            } from '../subworkflows/local/fastq_create_umi_consensus_fgbio/main'
 include { FASTQ_CREATE_UMI_CONSENSUS_FGBIO            } from '../subworkflows/nf-core/fastq_create_umi_consensus_fgbio/main'
 
 // Map input reads to reference genome
@@ -696,9 +695,12 @@ workflow SAREK {
             FASTQ_CREATE_UMI_CONSENSUS_FGBIO(
                 input_fastq,
                 fasta,
-                fasta_fai,
                 index_alignement,
-                params.group_by_umi_strategy)
+                dict,
+                params.group_by_umi_strategy,
+                "bwa-mem",
+                false
+                )
 
             bam_converted_from_fastq = FASTQ_CREATE_UMI_CONSENSUS_FGBIO.out.consensusbam.map{ meta, bam -> [ meta, bam, [] ] }
 
